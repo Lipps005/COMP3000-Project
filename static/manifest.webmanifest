@@ -9,7 +9,7 @@
          "purpose" : "any maskable"
       }
    ],
-   "start_url" : "/index.ejs",
+   "start_url" : "/",
    "display" : "standalone",
    "orientation" : "landscape",
    "theme_color": "#32a852",
