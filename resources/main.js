@@ -8,7 +8,8 @@ const path = require("path");
 const cors = require("cors");
 let http = require("http");
 
-let port = 9000;
+const PORT = process.env.PORT;
+
 
 // Initialise the app.
 app = express();
@@ -27,8 +28,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({extended: true}));
 
 // Start the app.
-app.listen(port, '192.168.1.47', function () {
-   console.log("Listening on " + port);
+app.listen(PORT, function () {
+   console.log(`Listening on ${ PORT }`);
 });
 
 app.get("/index", (req, res) =>
