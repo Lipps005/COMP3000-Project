@@ -3,6 +3,6 @@
  * Project: COMP3000 Coursework
  */
 
-navigator.serviceWorker.register('/service-worker.js');
+var x = navigator.serviceWorker.register('service-worker.js');
 
 

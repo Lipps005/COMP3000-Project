@@ -16,11 +16,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 
 // Set up the static files.
-app.use(express.static(path.join('../', "static")));
+app.use(express.static(path.join('', "static")));
 
 
 // Setup the app to use EJS templates.
-app.set("views", path.join('../', "views"));
+app.set("views", path.join('', "views"));
 app.set("view engine", "ejs");
 
 // Enable processing of post forms.
