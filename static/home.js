@@ -3,6 +3,7 @@
  * Project: COMP3000 Coursework
  */
 
-var x = navigator.serviceWorker.register('service-worker.js');
-
-
+if("serviceWorker" in navigator)
+{
+   navigator.serviceWorker.register('service-worker.js');
+}

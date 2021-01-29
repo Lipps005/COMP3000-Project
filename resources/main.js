@@ -27,11 +27,12 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({extended: true}));
 
 // Start the app.
-app.listen(PORT, function () {
+app.listen(PORT, function () 
+{
    console.log(`Listening on ${ PORT }`);
 });
 
 app.get("/index", (req, res) =>
 {
-   res.render("index", {});
+  res.render("index", {});
 });
