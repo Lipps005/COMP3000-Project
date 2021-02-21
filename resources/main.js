@@ -36,3 +36,13 @@ app.get("/index", (req, res) =>
 {
   res.render("index", {});
 });
+
+app.get("/app", (req, res) =>
+{
+  res.render("app", {});
+});
+
+app.post("/newimage", (req, res) =>
+{
+   console.log(req.body.data);
+});

@@ -3,4 +3,10 @@
  * Project: COMP3000 Coursework
  */
 
+var imageCapture = navigator.mediaDevices;
+
+
+
+
+
 

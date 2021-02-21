@@ -6,16 +6,19 @@ Project: COMP3000 Coursework
 <html>
    <head>
       <title>COMP3000</title>
-      <meta name='apple-mobile-web-app-capable' content="yes">
-      <meta name="mobile-web-app-capable" content='yes'>
-      <link rel="icon" type="image/svg_xml" href="/img/comp-pencil-icon.svg" >
-      <link rel="manifest" href="manifest.webmanifest">
+      <link rel="icon" href="/img/hero-logo.svg" >
+      <link rel="manifest" href="manifest.webmanifest.json">
+      <link rel="stylesheet" href="/css/index.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="home.js"></script>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
    </head>
+
    <body>
-      <h1>Welcome to my App.</h1>
+      <button id="imgButton">Get Capture</button>
+      <button onclick="stopGrabFrame()">Stop frame grab</button>
+      <p id="count"></p>
    </body>
 </html>
 

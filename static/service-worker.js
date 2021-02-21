@@ -3,7 +3,6 @@
  * Project: COMP3000 Coursework
  */
 
-
 // Install 
 self.addEventListener('install', function(event) {
     console.log("install");
@@ -18,3 +17,4 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
     console.log("fetch");
 });
+
