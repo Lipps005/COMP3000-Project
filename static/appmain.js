@@ -108,7 +108,7 @@ $(document).ready(function () {
            pos3 = 0,
            pos4 = 0;
 
-   $("#toolbar-mover").on("mousedown ontouchstart", function (e) {
+   $("#toolbar-mover").on("mousedown touchstart", function (e) {
       e = e || window.event;
       e.preventDefault();
 
