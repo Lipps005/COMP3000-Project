@@ -108,10 +108,8 @@ $(document).ready(function () {
            pos3 = 0,
            pos4 = 0;
 
-   $("#toolbar-mover").on("mousedown ontouchstart", function (e) {
-      e = e || window.event;
-      e.preventDefault();
-
+   $("#toolbar-mover").on("mousedown touchstart", function (e) {
+      e = e.changedTouches[0] || e;
       // get the mouse cursor position at startup:
       pos3 = e.clientX;
       pos4 = e.clientY;
@@ -123,8 +121,7 @@ $(document).ready(function () {
    });
 
    function mousemover(e) {
-      e = e || window.event;
-      e.preventDefault();
+      e = e.changedTouches[0] || e;
       // calculate the new cursor position:
       pos1 = pos3 - e.clientX;
       pos2 = pos4 - e.clientY;
@@ -147,6 +144,7 @@ $(document).ready(function () {
          $("#toolbar").css("left", $(window).width() - $("toolbar").outerWidth(true) + "px");
       }
    }
+   ;
 
    function mouseupevent() {
       /* stop moving when mouse button is released:*/
@@ -167,7 +165,8 @@ $(document).ready(function () {
          console.log("track not defined");
       }
 
-   };
+   }
+   ;
 
    function userClickPlay()
    {
