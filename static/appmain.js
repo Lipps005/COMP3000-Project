@@ -109,6 +109,7 @@ $(document).ready(function () {
            pos4 = 0;
 
    $("#toolbar-mover").on("mousedown touchstart", function (e) {
+
       e = e.changedTouches[0] || e;
 
       // get the mouse cursor position at startup:
