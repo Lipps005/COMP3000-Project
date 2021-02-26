@@ -110,11 +110,11 @@ $(document).ready(function () {
 
    $("#toolbar-mover").on("mousedown touchstart", function (e) {
 
-      e = e.changedTouches[0] || e;
+      var event = e.changedTouches[0] || e;
 
       // get the mouse cursor position at startup:
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+       pos3 = event.clientX;
+      pos4 = event.clientY;
       // call a function whenever the cursor moves:
       $("body").on("mousemove touchmove", mousemover);
 
@@ -123,28 +123,28 @@ $(document).ready(function () {
    });
 
    function mousemover(e) {
-      e = e.changedTouches[0] || e;
-      // calculate the new cursor position:
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+      var event = e.changedTouches[0] || e;
+      pos1 = pos3 - event.clientX;
+      pos2 = pos4 - event.clientY;
+      pos3 = event.clientX;
+      pos4 = event.clientY;
 
-      // set the element's new position:
-      $("#toolbar").css("top", ($("#toolbar").offset().top - pos2) + "px");
-      if ($("#toolbar").offset().top <= 0) {
-         $("#toolbar").css("top", 0 + "px");
+      let offsettop = $("#toolbar").offset().top;
+      let offsetleft = $("#toolbar").offset().left;
+      pos2 = offsettop - pos2 <= 0 ? offsettop : pos2;
+      if (offsettop + pos2 + $("#toolbar").outerHeight() > $(window).outerHeight())
+      {
+         pos2 = $("#toolbar").innerHeight() * 0.01;
       }
-      if (($("#toolbar").offset().top >= $(window).height() - $("toolbar").outerHeight(true))) {
-         $("#toolbar").css("top", $(window).height() - $("toolbar").outerHeight(true) + "px");
+      $("#toolbar").css("top", ($("#toolbar").offset().top - pos2) + "px");
+
+
+      pos1 = offsetleft - pos1 <= 0 ? offsetleft : pos1;
+      if (offsetleft + pos1 + $("#toolbar").outerWidth() > $(window).innerWidth())
+      {
+         pos1 = $("#toolbar").innerHeight() * 1.1;
       }
       $("#toolbar").css("left", ($("#toolbar").offset().left - pos1) + "px");
-      if ($("#toolbar").offset().left <= 0) {
-         $("#toolbar").css("left", 0 + "px");
-      }
-      if ($("#toolbar").offset().left >= $(window).width() - $("toolbar").outerWidth(true)) {
-         $("#toolbar").css("left", $(window).width() - $("toolbar").outerWidth(true) + "px");
-      }
    }
    ;
 
@@ -160,15 +160,12 @@ $(document).ready(function () {
       try
       {
          track.enabled = false;
-         $(".toolbar-contents:nth-child(2)").css("display", "inline");
-         $(".toolbar-contents:nth-child(1)").css("display", "none");
+         $("#pause-button, #play-button").toggleClass("element-hidden");
       } catch (err)
       {
          console.log("track not defined");
       }
-
-   }
-   ;
+   };
 
    function userClickPlay()
    {
@@ -176,31 +173,36 @@ $(document).ready(function () {
       try
       {
          track.enabled = true;
-
-         $(".toolbar-contents:nth-child(2)").css("display", "none");
-         $(".toolbar-contents:nth-child(1)").css("display", "inline");
+         $("#pause-button, #play-button").toggleClass("element-hidden");
 
       } catch (err)
       {
          console.log("track not defined");
       }
-
-   }
+   };
+   
    $(window).on("blur", userClickPause);
-   $(".toolbar-contents:nth-child(1)").click(userClickPause);
-
-   $(".toolbar-contents:nth-child(2)").click(userClickPlay);
-
+   $("#pause-button").click(userClickPause);
+   $("#play-button").click(userClickPlay);
 
 
-   $("#toolbar-pen").click(async function ()
+   $("#camera-show").click(async function ()
    {
       await getCamera();
       $(document).on("capture", captureFrame);
-      $(".toolbar-contents:nth-child(2)").click(userClickPlay);
-      $(this).toggleClass("toolbar-pen-inactive");
+      userClickPlay();
+      $("#camera-hide, #camera-show").toggleClass("element-hidden");
 
    });
+
+   var showToolbar = function () {
+
+      $("#toolbar-body").toggleClass("roll");
+      $(this).toggleClass("roll");
+
+   };
+
+   $("#toolbar-mover").click(showToolbar);
 
    $(window).resize(function ()
    {

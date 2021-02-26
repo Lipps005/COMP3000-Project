@@ -7,133 +7,236 @@ Project: COMP3000 Coursework
     Author     : samue
 */
 
-:root
-{
-	--notification-timing-function: cubic-bezier(0.965, -0.105, 0.295, 1.225);
+:root {
+  --notification-timing-function: cubic-bezier(0.965, -0.105, 0.295, 1.225);
+  --content-stroke-color: hsla(223, 14%, 55%, 100%);
+  --content-hover-color: hsla(223, 74%, 72%, 100%);
+  --background-fill-color: hsla(0, 0%, 100%, 1);
+  --toolbar-fill-color: hsla(0, 0%, 87%, 100%);
+  --svg-fill-color: hsla(223, 14%, 72%, 100%);
+  --switch-off-color: hsla(223, 14%, 65%, 100%);
+  --switch-focus-outline: 2px hsla(0, 0%, 72%, 100%);
+  --switch-label-off-content: "Raw";
+  --switch-off-content-color: hsla(223, 14%, 69%, 100%);
+
+  --main-z-index: -1;
+	---notify-modal-z-index: 2;
+  --toolbar-z-index: 3;
+  --toolbar-body-z-index: 4;
+  --toolbar-mover-z-index: 5;
+
 }
+
+* {
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+
+
+
 
 body {
-  width: 100%;
-  height: 100vh;
   padding: 0;
   margin: 0;
-	overflow-y: hidden;
-	overflow-x: hidden;
-	font-family: 'Open Sans', sans-serif;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  font-family: 'Open Sans', sans-serif;
 }
 
-.main
+video {
+  /*possible fix for user agent muting camera is
+	to use the media stream track as its source. 
+	Hiding the video element by moving it behind the
+	main content means it doesnt get in the way */
+  position: fixed;
+  z-index: -1;
+}
+
+.h-100vh {
+  height: 100vh;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.padding-005rem {
+  padding: 0.5rem;
+}
+
+.padding-0rem {
+  padding: 0;
+}
+
+.main {
+  z-index: var(--main-z-index);
+  padding-top: auto;
+
+}
+
+.flex {
+  display: flex;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.column
 {
-	  display: flex;
-
+	flex-direction: column;
 }
 
-.flex-row {
-  height: 100%;
-  background-color: white;
-  transform-origin: bottom left;
-}
-
-.flex-row:nth-of-type(1)
+.nowrap
 {
-	  flex: 63%;
+	flex-wrap: nowrap;
 }
-.flex-row:nth-of-type(2)
+.wrap
 {
-	  flex: 30%;
+	flex-wrap: wrap;
 }
 
+
+.flex-row-container {
+  background-color: var(--background-fill-color);
+}
+
+.flex-30 {
+  flex: 30%;
+}
+
+.flex-60 {
+  flex: 60%;
+}
+
+.justify-center
+{
+	justify-content: center;
+}
+
+.align-center
+{
+	align-items: center;
+}
+
+.justify-space-between
+{
+	justify-content: space-between;
+}
+.border-radius-round {
+  border-radius: 21px;
+}
+
+.border-radius-cirlce {
+  border-radius: 9999px;
+}
+
+.disp-inline {
+  display: inline;
+}
+
+.width-3rem {
+  width: 3rem;
+}
+
+.height-3rem {
+  height: 3rem;
+}
+
+.toolbar-fill-color {
+  background-color: var(--toolbar-fill-color);
+}
 
 #toolbar {
-	top: 88%;
-	left: 33%;
-	box-sizing: border-box;
+  top: 80%;
+  left: calc(33% - 1rem);
   position: absolute;
-  z-index: 1;
-  text-align: center;
-  opacity: 0.5;
+  z-index: var(--toolbar-z-index);
 }
+
+#toolbar-mover {
+  z-index: var(--toolbar-mover-z-index);
+  transform: rotate(var(--toolbar-mover-rotate-factor, 0));
+  transition: transform 0.4s;
+}
+
+#toolbar-mover>* {
+  stroke: var(--content-stroke-color);
+}
+
 
 #toolbar-body {
-height: 3em;
-width: 24em;
-  z-index: 10;
-  color: #333333;
-	display: flex;
-	background-color: #F4F4F4;
-	border-radius: 21px;
-        
+  z-index: var(--toolbar-body-z-index);
+  /*overflow prevents contents showing.
+	whitespace keeps all text on same line.
+	line height makes contents fill container (not needed)
+	*/
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 3em;
+  width: var(--toolbar-content-width-to, 0);
+  transform: translateX(var(--toolbar-translate-to, -0.15rem));
+  opacity: var(--toolbar-opacity-to, 0);
+  transition: width 0.4s, transform 0.1s, opacity 0.3s;
 }
 
-#toolbar:hover
-{
-   opacity: 1;
-}
-
-.toolbar-contents
-{
-	flex: 30%;
-	height: 90%;
-	box-sizing: border-box;
-	display: inline;
-padding: 5px;
-padding-left: 10%;
-padding-right: 10%;
-margin: auto;
-}
-
-.toggle-pause-play
-{
-display: none;	
-}
-
-.notify-modal
-{
-	width: 30em;
-	height: 4em;
-	z-index: 2;
-	position: absolute;
-	top: -100vh;
-	left: 30%;
+.roll {
+  --toolbar-mover-rotate-factor: 278deg;
+  --toolbar-content-width-to: 10rem;
+  --toolbar-translate-to: 0.2rem;
+	--toolbar-opacity-to: 1;
 }
 
 
-.modal-notify
-{
-		animation: modal-notify-animation 10s var(--notification-timing-function);
+.toolbar-contents {
+  height: 3rem;
+  width: 100%;
+  padding: 0.5rem;
+  margin: auto;
 }
 
-@keyframes modal-notify-animation
-{
-	30%, 70%{
-		top: 1vh;
-		
-	}
+.toolbar-contents>* {
+  stroke: var(--content-stroke-color);
+}
+
+.toolbar-contents:hover * {
+  stroke: white;
+}
+
+.toolbar-contents:hover {
+
+  background-color: var(--content-hover-color);
+  border-radius: 21px;
+}
+
+.toggle-pause-play {
+  display: none;
+}
+
+.notify-modal {
+  width: 30em;
+  height: 4em;
+  z-index: var(---notify-modal-z-index);
+  position: absolute;
+  top: -100vh;
+  left: 30%;
 }
 
 
-
-.toolbar-contents:nth-child(1)
-{
-	display: none;
+.modal-notify {
+  animation: modal-notify-animation 10s var(--notification-timing-function);
 }
 
-.toolbar-pen-active
-{
-	--toolbar-pen-color: #6FCF97;
+@keyframes modal-notify-animation {
+
+  30%,
+  70% {
+    top: 1vh;
+
+  }
 }
 
-.toolbar-pen-inactive
-{
-	--toolbar-pen-color: #EB5757;
-}
 
-#toolbar-pen
-{
-	fill: var(--toolbar-pen-color);
-}
-
-#toolbar-mover:not(:active)
-{
-	opacity: 0.5;
+.element-hidden {
+  display: none;
 }

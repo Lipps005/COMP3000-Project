@@ -3,13 +3,13 @@
    "name": "COMP3000 App",
    "icons": [
             {
-         "src": "/img/maskable-icon.svg",
+         "src": "/img/pen-icon-maskable-v2.svg",
          "sizes": "512x512",
          "type": "image/svg",
          "purpose": "any maskable monochrome"
       },
       {
-         "src": "/img/maskable-icon.png",
+         "src": "/img/512-maskable-pen-icon.png",
          "sizes": "512x512",
          "type": "image/png",
          "purpose": "any maskable monochrome"
