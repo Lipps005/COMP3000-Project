@@ -3,7 +3,7 @@
  * Project: COMP3000 Coursework
  */
 
-var version = 'v1::';
+var version = 'v2::';
 
 // Install 
 self.addEventListener('install', function (event) {

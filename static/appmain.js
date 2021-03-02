@@ -110,7 +110,7 @@ $(document).ready(function () {
 
    $("#toolbar-mover").on("mousedown touchstart", function (e) {
 
-      var event = e.changedTouches[0] || e;
+            var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
 
       // get the mouse cursor position at startup:
        pos3 = event.clientX;
@@ -123,28 +123,13 @@ $(document).ready(function () {
    });
 
    function mousemover(e) {
-      var event = e.changedTouches[0] || e;
+      var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
       pos1 = pos3 - event.clientX;
       pos2 = pos4 - event.clientY;
       pos3 = event.clientX;
       pos4 = event.clientY;
-
-      let offsettop = $("#toolbar").offset().top;
-      let offsetleft = $("#toolbar").offset().left;
-      pos2 = offsettop - pos2 <= 0 ? offsettop : pos2;
-      if (offsettop + pos2 + $("#toolbar").outerHeight() > $(window).outerHeight())
-      {
-         pos2 = $("#toolbar").innerHeight() * 0.01;
-      }
-      $("#toolbar").css("top", ($("#toolbar").offset().top - pos2) + "px");
-
-
-      pos1 = offsetleft - pos1 <= 0 ? offsetleft : pos1;
-      if (offsetleft + pos1 + $("#toolbar").outerWidth() > $(window).innerWidth())
-      {
-         pos1 = $("#toolbar").innerHeight() * 1.1;
-      }
-      $("#toolbar").css("left", ($("#toolbar").offset().left - pos1) + "px");
+		$("#toolbar").css("margin-bottom", ($("#toolbar-container").innerHeight() - pos4) + "px");
+		$("#toolbar").css("margin-right", ($("#toolbar-container").innerWidth() - pos3) + "px");
    }
    ;
 
