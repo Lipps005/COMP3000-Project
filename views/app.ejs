@@ -14,9 +14,21 @@ Project: COMP3006 Coursework
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
    <script src="appmain.js"></script>
    <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
 </head>
 <body class="h-100vh w-100">
+<div id="loading-cover" class="h-100vh w-100 flex column wrap loader ">
+<svg class="auto-margin" id="loader-camera" viewBox="0 0 39 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M11 5L12.4792 2.7812C13.2211 1.6684 14.47 1 15.8074 1H22.1926C23.53 1 24.7789 1.6684 25.5208 2.7812L27 5H37V27H1V5H3H8H11Z" stroke="#333333" stroke-linecap="round" stroke-linejoin="round"/>
+
+<rect class="loader-camera-element" x="29.5" y="7.5" width="5" height="3" rx="0.8" stroke="#333333"/>
+<path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M19 21C22.3137 21 25 18.3137 25 15C25 11.6863 22.3137 9 19 9C15.6863 9 13 11.6863 13 15C13 18.3137 15.6863 21 19 21Z" stroke="#333333"/>
+<line class="loader-camera-element" x1="4.5" y1="7" x2="4.5" y2="25" stroke="#333333"/>
+<path class="loader-camera-element" d="M9 5V2.85714C9 2.38376 8.61624 2 8.14286 2H3.85714C3.38376 2 3 2.38376 3 2.85714V5" stroke="#333333"/>
+</svg>
+<span id="loader-text-hint" class="auto-margin" >Waiting for camera permission</span>
+</div>
    <div id="toolbar-container">
       <div id="toolbar" class="flex border-radius-round">
          <svg id="toolbar-mover" class="disp-inline width-3rem height-3rem border-radius-cirlce toolbar-fill-color padding-005rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -73,7 +85,7 @@ Project: COMP3006 Coursework
 
       <div class="flex-row-container flex-60">
       </div>
-      <div class="flex-row-container flex-30">
+      <div class="flex-row-container flex-30 flex row wrap">
 
       </div>
 
