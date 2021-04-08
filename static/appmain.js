@@ -2,41 +2,33 @@
  * Author: Samuel Lippett
  * Project: COMP3000 Coursework
  */
-function CustomWorker()
-{
+function CustomWorker() {
     worker = new Worker("getFrameThread.js");
-    listeners = {};
+    listeners = new Map();
 
-    this.postMessage = function(data, transfer = null)
-    {
-        if(transfer === null){worker.postMessage(data);}
-        else{worker.postMessage(data, transfer);}
-    }
-
-    this.addEventListener = function(name, listener)
-    {
-        listeners[name] = listener;
-    }
-
-    this.removeEventListener = function(name)
-    {
-        delete listeners[name];
-    }
-
-    worker.onmessage = function(event)
-    {
-        if(event.data.hasOwnProperty("customEvent") &&
-           event.data.hasOwnProperty("eventArguments"))
-        {
-            listeners[event.data.customEvent].apply(instance, event.data.eventArguments);
+    this.postMessage = function(data, transfer=null) {
+        if (transfer === null) {
+            worker.postMessage(data);
+        } else {
+            worker.postMessage(data, transfer);
         }
     }
 
-    this.sendQuery = function()
-    {
+    this.addEventListener = function(name, listener) {
+        listeners.set(name, listener);
+    }
 
-        worker.postMessage(
-        {
+    this.removeEventListener = function(name) {
+        listeners.delete(name);
+    }
+
+    worker.onmessage = async function(event) {
+            listeners.get(event.data.customEvent)(event);
+    }
+
+    this.sendQuery = function() {
+
+        worker.postMessage({
             'customEvent': arguments[0],
             'eventArguments': Array.prototype.slice.apply(arguments, 1)
         });
@@ -54,11 +46,10 @@ var mediaStream;
 var imageCapture;
 
 function dispatchCaptureEvent() {
-    t0 = performance.now();
     document.dispatchEvent(event);
 
 }
-var interval = setInterval(dispatchCaptureEvent, (1 / 20) * 1000);
+var interval = setInterval(dispatchCaptureEvent, (1 / 17) * 1000);
 
 //create serviceWorker
 if ("serviceWorker"in navigator) {
@@ -67,7 +58,6 @@ if ("serviceWorker"in navigator) {
 
 //set up custom webworker and pass it an offscreen canvas.
 var WebWorker = new CustomWorker();
-
 
 //check if touch is supported in browser
 var tooolbarstartevent, toolbarmoveevent, toolbarendevent;
@@ -102,12 +92,17 @@ function gotMedia(mediastream) {
     const video = document.getElementById('hiddenvideo');
     video.srcObject = mediaStream;
     //video.play();
-    WebWorker.postMessage(
-    {customEvent: "transferCanvas",
-     width:track.getSettings().width,
-     height: track.getSettings().height});
 
-    
+    let documentVideoElement = document.getElementById("offscreencanvas");
+    documentVideoElement.width = track.getSettings().width;
+    documentVideoElement.height = track.getSettings().height;
+
+    WebWorker.postMessage({
+        customEvent: "transferCanvas",
+        width: track.getSettings().width,
+        height: track.getSettings().height,
+    });
+
     track.onmute = function(evt) {
         evt.preventDefault();
         console.log("muted");
@@ -132,21 +127,47 @@ function gotMedia(mediastream) {
 }
 
 function captureFrame(e) {
-    if (track.readyState === "live" && track.muted === false && track.enabled === true) {
-        imageCapture.grabFrame().then(processFrame).then(()=>{
-            t1 = performance.now();
-            //console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
-        }
-        ).catch(err=>console.error('grabFrame() failed: ', track.enabled));
+    if (track.readyState === "live" && track.muted === false && track.enabled === true) 
+    {
+        imageCapture.grabFrame()
+                    .then(processFrame)
+                    .catch((err)=>
+                    {console.error('grabFrame() failed: ', track.enabled);
+                     });
 
     }
 }
 
 function processFrame(imgData) {
-    WebWorker.postMessage({customEvent:"transferImageBitmap",bitmap: imgData},[imgData]);
+    WebWorker.postMessage({
+        customEvent: "transferImageBitmap",
+        bitmap: imgData
+    }, [imgData]);
 }
 
 $(document).ready(function() {
+
+    WebWorker.addEventListener("returnCoordinates", async function(result) {
+        //var svg = document.getElementById('drawing-container');
+        //var point = svg.createSVGPoint();
+        //point.x = result.data.coordinates.x;
+        //point.y = result.data.coordinates.y;
+        //svgP = point.matrixTransform( svg.getScreenCTM());
+        //var polyline = document.getElementById('polyline-id');
+        //polyline.points.appendItem(point);
+        var circle = document.getElementById('circle');
+        let x = ($("#drawing-container").innerWidth());
+        let y = ($("#drawing-container").innerHeight());
+
+
+    });
+
+    WebWorker.addEventListener("returnNewContext", async function(result)
+    {
+        document.getElementById("offscreencanvas")
+               .getContext("2d")
+               .putImageData(result.data.bitmap, 0, 0);
+    });
 
     function notifyOnline() {
         $("#online-modal").removeClass("modal-notify");
@@ -214,7 +235,6 @@ $(document).ready(function() {
             track.enabled = true;
             $("#pause-button, #play-button").toggleClass("element-hidden");
             $("#loading-cover").addClass("load-out");
-            
 
         } catch (err) {
             console.log("track not defined");

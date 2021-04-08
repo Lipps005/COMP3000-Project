@@ -61,6 +61,7 @@ Project: COMP3006 Coursework
    </div>
 
    <video id="hiddenvideo" autoplay></video>
+   <canvas id="offscreencanvas"></canvas>
    <svg class="notify-modal" id="offline-modal" viewBox="0 0 314 114" fill="none" xmlns="http://www.w3.org/2000/svg">
    <rect y="4" width="314" height="110" rx="21" fill="#F4F4F4" />
    <path d="M100.885 47.873C78.8639 25.8517 44.1 24.9122 23.2378 45.7744" stroke="black" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
@@ -86,7 +87,12 @@ Project: COMP3006 Coursework
       <div class="flex-row-container flex-60">
       </div>
       <div class="flex-row-container flex-30 flex row wrap">
-
+            <!--- <svg height="100%" width="100%" id='drawing-container'>
+                  <polyline id="polyline-id" points="90,1.2 " style="fill:none;stroke:#000;stroke-width:3" />
+            </svg> ---!>
+            <svg id="svg" height="100%" width="100%" id='drawing-container'>
+                  <circle id="circle" cx="50" cy="50" r="4" stroke="black" stroke-width="3" fill="red" />
+            </svg> 
       </div>
 
 
