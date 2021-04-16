@@ -23,7 +23,7 @@ function CustomWorker() {
     }
 
     worker.onmessage = async function(event) {
-            listeners.get(event.data.customEvent)(event);
+        listeners.get(event.data.customEvent)(event);
     }
 
     this.sendQuery = function() {
@@ -94,13 +94,14 @@ function gotMedia(mediastream) {
     //video.play();
 
     let documentVideoElement = document.getElementById("offscreencanvas");
+
     documentVideoElement.width = track.getSettings().width;
     documentVideoElement.height = track.getSettings().height;
 
     WebWorker.postMessage({
         customEvent: "transferCanvas",
         width: track.getSettings().width,
-        height: track.getSettings().height,
+        height: track.getSettings().height
     });
 
     track.onmute = function(evt) {
@@ -127,13 +128,11 @@ function gotMedia(mediastream) {
 }
 
 function captureFrame(e) {
-    if (track.readyState === "live" && track.muted === false && track.enabled === true) 
-    {
-        imageCapture.grabFrame()
-                    .then(processFrame)
-                    .catch((err)=>
-                    {console.error('grabFrame() failed: ', track.enabled);
-                     });
+    if (track.readyState === "live" && track.muted === false && track.enabled === true) {
+        imageCapture.grabFrame().then(processFrame).catch((err)=>{
+            console.error('grabFrame() failed: ', track.enabled);
+        }
+        );
 
     }
 }
@@ -148,25 +147,19 @@ function processFrame(imgData) {
 $(document).ready(function() {
 
     WebWorker.addEventListener("returnCoordinates", async function(result) {
-        //var svg = document.getElementById('drawing-container');
-        //var point = svg.createSVGPoint();
-        //point.x = result.data.coordinates.x;
-        //point.y = result.data.coordinates.y;
-        //svgP = point.matrixTransform( svg.getScreenCTM());
-        //var polyline = document.getElementById('polyline-id');
-        //polyline.points.appendItem(point);
-        var circle = document.getElementById('circle');
-        let x = ($("#drawing-container").innerWidth());
-        let y = ($("#drawing-container").innerHeight());
+    var drawingCanvas = document.getElementById('drawing-container');
 
+    let pointx = result.data.scaledx * document.getElementById('drawing-container').offsetWidth;
+    let pointy = result.data.scaledy * document.getElementById('drawing-container').offsetHeight;
+    
+    drawingCanvas.getContext("2d").lineTo(pointx, pointy);
+    drawingCanvas.getContext("2d").stroke();   
 
     });
 
-    WebWorker.addEventListener("returnNewContext", async function(result)
-    {
-        document.getElementById("offscreencanvas")
-               .getContext("2d")
-               .putImageData(result.data.bitmap, 0, 0);
+    WebWorker.addEventListener("returnNewContext", async function(result) {
+        var context = document.getElementById("offscreencanvas").getContext("2d");
+        context.putImageData(result.data.bitmap, 0, 0);
     });
 
     function notifyOnline() {
@@ -195,19 +188,19 @@ $(document).ready(function() {
         var event = e.changedTouches[0];
 
         // get the mouse cursor position at startup:
-        pos3 = event.layerX;
-        pos4 = event.layerY;
+        pos3 = event.clientX;
+        pos4 = event.clientY;
         // call a function whenever the cursor moves:
         $("body").on(toolbarmoveevent, mousemover);
 
         $("body").on(toolbarendevent, mouseupevent);
 
     });
-
+    
     function mousemover(e) {
         var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
-        pos1 = pos3 - event.layerX;
-        pos2 = pos4 - event.layerY;
+        pos1 = pos3 - event.clientX;
+        pos2 = pos4 - event.clientY;
         pos3 = event.clientX;
         pos4 = event.clientY;
         $("#toolbar").css("margin-bottom", ($("#toolbar-container").innerHeight() - pos4) + "px");
@@ -225,6 +218,7 @@ $(document).ready(function() {
             track.enabled = false;
             $("#pause-button, #play-button").toggleClass("element-hidden");
             $("#loading-cover").removeClass("load-out");
+            $("#loader-text-hint").text("App paused. Press play to continue");
         } catch (err) {
             console.log("track not defined");
         }
@@ -245,11 +239,18 @@ $(document).ready(function() {
     $("#play-button").click(userClickPlay);
 
     $("#camera-show").click(async function() {
-        await getCamera();
+        getCamera()
+        .then(()=>{
         $("#loading-cover").toggleClass("load-out");
         $(document).on("capture", captureFrame);
         userClickPlay();
         $("#camera-hide, #camera-show").addClass("element-hidden");
+        }
+        )
+        .catch()
+        {
+            $("#loader-text-hint").text("unable to get camera permission");
+        }
 
     });
 

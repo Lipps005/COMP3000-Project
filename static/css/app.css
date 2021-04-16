@@ -286,6 +286,10 @@ display: inline;
 
 }
 
+#offscreencanvas
+{
+   /* display: none; */
+}
 
 
 .element-hidden {

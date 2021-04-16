@@ -3,7 +3,8 @@
  * Project: COMP3000 Coursework
  */
 
-var version = 'v2::';
+var version = 'v3:4:1';
+const regex = new RegExp("/localhost:5000/newimage");
 
 // Install 
 self.addEventListener('install', function(event) {
@@ -38,8 +39,8 @@ self.addEventListener('activate', function(event) {
 
 // Listen for network requests from the main document
 self.addEventListener('fetch', function(event) {
-    if (event.request.method !== 'GET') {
-        console.log('WORKER: fetch event ignored.', event.request.method, event.request.url);
+    if(event.request.method !=="GET")
+    {
         return;
     }
     event.respondWith(caches.match(event.request)//promise that resolves into a cache entry we can serve to the response.
@@ -56,20 +57,26 @@ self.addEventListener('fetch', function(event) {
 
             console.log('WORKER: fetch response from network.', event.request.url);
 
-            caches // We open a cache to store the response for this request.
-            .open(version + 'pages').then(function add(cache) {
-                cache.put(event.request, cacheCopy);
-            }).then(function() {
-                console.log('WORKER: fetch response stored in cache.', event.request.url);
-            });
+
+                caches // We open a cache to store the response for this request.
+                .open(version + 'pages').then(function add(cache) {
+                    cache.put(event.request, cacheCopy);
+                }).then(function() {
+                    console.log('WORKER: fetch response stored in cache.', event.request.url);
+                });
+
 
             return response;
         }
 
         //this function is called when we a reponse was unavailable from either the cache or
         //the network. 
-        function unableToResolve() {
-            /* There's a couple of things we can do here.
+
+    }));
+});
+
+function unableToResolve() {
+    /* There's a couple of things we can do here.
                   - Test the Accept header and then return one of the `offlineFundamentals`
                   e.g: `return caches.match('/some/cached/image.png')`
                   - You should also consider the origin. It's easier to decide what
@@ -78,19 +85,17 @@ self.addEventListener('fetch', function(event) {
                   - Generate a Response programmaticaly, as shown below, and return that
                   */
 
-            console.log('WORKER: fetch request failed in both cache and network.');
+    console.log('WORKER: fetch request failed in both cache and network.');
 
-            /* Here we're creating a response programmatically. The first parameter is the
+    /* Here we're creating a response programmatically. The first parameter is the
                   response body, and the second one defines the options for the response.
                   */
-            return new Response('<h1>Service Unavailable</h1>',{
-                status: 503,
-                statusText: 'Service Unavailable',
-                headers: new Headers({
-                    'Content-Type': 'text/html'
-                })
-            });
-            notifyOffline();
-        }
-    }));
-});
+    return new Response('<h1>Service Unavailable</h1>',{
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: new Headers({
+            'Content-Type': 'text/html'
+        })
+    });
+    notifyOffline();
+}

@@ -2,25 +2,8 @@
  * Author: Samuel Lippett
  * Project: COMP3000 Coursework
  */
-class bufferModerator {
+ 
 
-    *bufferGenerator(array) {
-        let x = [];
-        if (this.buffer.length > 2) {
-            x = this.buffer;
-            this.buffer.pop();
-        }
-        this.buffer.push([array]);
-
-        yield x;
-    }
-
-    constructor(width, height) {
-        this.buffer = [];
-        this.width = width;
-        this.height = height;
-    }
-}
 
 var processFrameThread = new Worker("processFrameWorker.js");
 var buffer;
@@ -61,33 +44,38 @@ var queryableFunctions = {
 
         let data = await canvasContext.getImageData(0, 0, width, height);
         processFrameThread.postMessage({
-            imgData: data,
-            width: width,
-            height: height
-        });
+        imgData: data,
+        width: width,
+        height: height
+    });
 
     }
 };
 
-self.onmessage = function(evt) {
+self.onmessage = async function(evt) {
     queryableFunctions[evt.data.customEvent].call(self, evt);
 }
 ;
 
 processFrameThread.onmessage = async function(result) {
-    await Promise.all([returnCoordinates(result), returnBitmap(result)]);
-    
+    await Promise.all([returnBitmap(result), returnBitmap(result)]);
+
 }
 ;
 
 async function returnCoordinates(result) {
-    await self.postMessage({
+    let scaledx = (result.data.xcoordinate/width);
+    let scaledy = (result.data.ycoordinate/height);
+    //console.log([scaledx, scaledy]);
+    self.postMessage({
         customEvent: "returnCoordinates",
         coordinates: {
-            x: result.data.xcoordinate,
-            y: result.data.ycoordinate
+            x: scaledx,
+            y: scaledy
         }
     });
+
+    //console.log([result.data.xcoordinate, result.data.ycoordinate]);
 
 }
 
@@ -99,3 +87,4 @@ async function returnBitmap(result) {
     });
 
 }
+
