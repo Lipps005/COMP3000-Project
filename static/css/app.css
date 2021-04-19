@@ -19,7 +19,7 @@ Project: COMP3000 Coursework
     --switch-off-content-color: hsla(223, 14%, 69%, 100%);
 
     --main-z-index: -1;
-    --loading-cover-z-index: 0;
+    --loading-cover-z-index: 1;
     ---notify-modal-z-index: 2;
     --toolbar-z-index: 3;
     --toolbar-body-z-index: 4;
@@ -289,12 +289,46 @@ display: inline;
 #offscreencanvas
 {
    /* display: none; */
+   width: 100%;
+   height: 100%;
+}
+
+#drawing-container
+{
+    width: 100%;
+    height: 100%;
+}
+
+#polyline-id
+{
+    stroke: hsla(223, 14%, 45%, 100%);
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+.meter
+{
+   
+    margin: 0 auto;
+	height: 2rem;
+	background-color: hsl(98, 61%, 85%);
+	width: 100%;
+}
+
+.meter span
+{
+	background-color: hsl(115, 69%, 75%);
+	  display: inline-block;
+  height: 100%;
+	  position: relative;
+  overflow: hidden;
+	animation: progressBar 5s infinite ease-out;
 }
 
 
 .element-hidden {
     display: none;
 }
+
 
 
 /*KEYFRAMES */

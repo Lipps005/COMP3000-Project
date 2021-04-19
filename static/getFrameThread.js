@@ -58,7 +58,7 @@ self.onmessage = async function(evt) {
 ;
 
 processFrameThread.onmessage = async function(result) {
-    await Promise.all([returnBitmap(result), returnBitmap(result)]);
+    await Promise.all([returnCoordinates(result), returnBitmap(result)]);
 
 }
 ;
@@ -67,6 +67,15 @@ async function returnCoordinates(result) {
     let scaledx = (result.data.xcoordinate/width);
     let scaledy = (result.data.ycoordinate/height);
     //console.log([scaledx, scaledy]);
+    //already standardised data here, could send it to server here by
+    //storing an array in this array? - would have to calculate stdv(x, y);
+    //Main thread would only have to scale and draw.
+
+    //this thread could send the result to the server.
+    
+    //accessing DOM in worker threads not allowed. Not 'safe'
+    // DOM is syncronous
+    // DOM is user-sensitive
     self.postMessage({
         customEvent: "returnCoordinates",
         coordinates: {

@@ -146,14 +146,50 @@ function processFrame(imgData) {
 
 $(document).ready(function() {
 
-    WebWorker.addEventListener("returnCoordinates", async function(result) {
-    var drawingCanvas = document.getElementById('drawing-container');
+    var count = 0;
+    var svgDrawingContainer = document.getElementById('drawing-container');
+    var xBefore = 0;
+    var yBefore = 0;
+    //var drawingContainerCtx = svgDrawingContainer.getContext("2d");
+    //drawingContainerCtx.lineCap = "round";
+    //drawingContainerCtx.strokeStyle = 'green';
+    //drawingContainerCtx.beginPath();
 
-    let pointx = result.data.scaledx * document.getElementById('drawing-container').offsetWidth;
-    let pointy = result.data.scaledy * document.getElementById('drawing-container').offsetHeight;
-    
-    drawingCanvas.getContext("2d").lineTo(pointx, pointy);
-    drawingCanvas.getContext("2d").stroke();   
+    WebWorker.addEventListener("returnCoordinates", async function(result) {
+        let width = svgDrawingContainer.clientWidth;
+        let height = svgDrawingContainer.clientHeight;
+        let pointx = width - (result.data.coordinates.x * width) - 1;
+        let pointy = result.data.coordinates.y * height;
+
+        let stdvX = ((pointx - xBefore) ** 2);
+        let stdvY = ((pointy - yBefore) ** 2);
+
+        if (stdvX > 9.3 || stdvY > 9.3) {
+            count = (count + 1) % 46;
+
+            var point = svgDrawingContainer.createSVGPoint();
+            point.x = pointx;
+            point.y = pointy;
+            //svgP = point.matrixTransform(svgDrawingContainer.getScreenCTM());
+            var polyline = document.getElementById('polyline-id');
+            polyline.points.appendItem(point);
+            $(".meter > span").css("width", (count / 46) * 100 + "%");
+        }
+        //if not different enough, and "progress" > 80?
+        //reset the drawing container by cloning the container,
+        //changing the id of the clone. "somehow" reset the points attribute,
+        //or replace the polyline element with a new one.
+        // - this could be a clone, pre-defined string thats converted to HTML element
+        //   or a template element
+       
+        //have the polyline with the attribute == array of points, what to do?
+        //Can only access the points, and the HTML element, in this thread.
+
+        //XML http requests 
+
+        xBefore = pointx;
+        yBefore = pointy;
+
 
     });
 
@@ -196,7 +232,7 @@ $(document).ready(function() {
         $("body").on(toolbarendevent, mouseupevent);
 
     });
-    
+
     function mousemover(e) {
         var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
         pos1 = pos3 - event.clientX;
@@ -226,6 +262,9 @@ $(document).ready(function() {
     ;function userClickPlay() {
         console.log("play");
         try {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            }
             track.enabled = true;
             $("#pause-button, #play-button").toggleClass("element-hidden");
             $("#loading-cover").addClass("load-out");
@@ -239,15 +278,14 @@ $(document).ready(function() {
     $("#play-button").click(userClickPlay);
 
     $("#camera-show").click(async function() {
-        getCamera()
-        .then(()=>{
-        $("#loading-cover").toggleClass("load-out");
-        $(document).on("capture", captureFrame);
-        userClickPlay();
-        $("#camera-hide, #camera-show").addClass("element-hidden");
+        getCamera().then(()=>{
+
+            $("#loading-cover").toggleClass("load-out");
+            $(document).on("capture", captureFrame);
+            userClickPlay();
+            $("#camera-hide, #camera-show").addClass("element-hidden");
         }
-        )
-        .catch()
+        ).catch()
         {
             $("#loader-text-hint").text("unable to get camera permission");
         }

@@ -57,6 +57,9 @@ var fromWidth, fromHeight = 0;
 var toWidth, toHeight = 0;
 var maxx = 50;
 var maxy = 50;
+var meanx = maxx;
+var meany = maxy;
+
 var maxFromHeight = 0;
 
 var firstPass = true;
@@ -68,11 +71,15 @@ self.onmessage = async function findNib(evt) {
     width = evt.data.width;
     height = evt.data.height;
 
+    let thresholdX = [meanx, meanx];
+    let thresholdY = [meany, meany];
+    
     fromWidth = Math.min(Math.max(maxx-50, 0), width-100);
     fromHeight = Math.min(Math.max(maxy-50, 0), height-200);
     toHeight = Math.max(Math.min(maxy+50, height), 100);
     toWidth = Math.max(Math.min(maxx+50, width), 100);
     
+
 
     let bitmapIndex = 0;
     let color = 0;
@@ -92,6 +99,8 @@ self.onmessage = async function findNib(evt) {
             if (V > 0) {
                 maxx = j;
                 maxy = i;
+                thresholdX.push(j);
+                thresholdY.push(i);
 
             }
             bitmap[bitmapIndex + 0] = V;
@@ -100,11 +109,23 @@ self.onmessage = async function findNib(evt) {
 
         }
     }
+
+//reduceRight(function(accumulator, currentValue, index, array))
+
+//"filtering?"
+    meanx = 1/thresholdX.length * (thresholdX.reduceRight(function(a, b) {return a + b;}));
+    meany = 1/thresholdY.length * (thresholdY.reduceRight(function(a, b) {return a + b;}));
+
+//standard deviation on pixels? Further processing?
+
+    maxx = Math.floor(meanx);
+    maxy = Math.floor(meany);
+    
     console.timeEnd("timer");
 
     self.postMessage({
-        xcoordinate: maxx,
-        ycoordinate: maxy,
+        xcoordinate: meanx,
+        ycoordinate: meany,
         bitmap: imgData
     });
 
