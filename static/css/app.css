@@ -15,11 +15,9 @@ Project: COMP3000 Coursework
     --svg-fill-color: hsla(223, 14%, 72%, 100%);
     --switch-off-color: hsla(223, 14%, 65%, 100%);
     --switch-focus-outline: 2px hsla(0, 0%, 72%, 100%);
-    --switch-label-off-content: "Raw";
     --switch-off-content-color: hsla(223, 14%, 69%, 100%);
-
     --main-z-index: -1;
-    --loading-cover-z-index: 1;
+    --loading-cover-z-index: -10;
     ---notify-modal-z-index: 2;
     --toolbar-z-index: 3;
     --toolbar-body-z-index: 4;
@@ -32,7 +30,7 @@ Project: COMP3000 Coursework
 }
 
 html {
-    overscroll-behavior-y: none;
+         overscroll-behavior-y: none;
     overscroll-behavior-x: none;
     overflow-y: hidden;
     overflow-x: hidden;
@@ -40,11 +38,11 @@ html {
 }
 
 body {
-    padding: 0;
-    margin: 0;
-    font-family: 'Open Sans', sans-serif;
-    font-family: 'Montserrat', sans-serif;
-    color: hsla(223, 14%, 45%, 100%);
+ padding: 0;
+ margin: 0;
+ font-family: 'Open Sans', sans-serif;
+ font-family: 'Montserrat', sans-serif;
+ color: hsla(223, 14%, 45%, 100%);
 }
 
 video {
@@ -169,10 +167,11 @@ video {
 
 #toolbar-container {
     z-index: var(--toolbar-z-index);
-    width: 100vw;
+    width: 35vw;
     height: 100vh;
     opacity: 1;
     position: absolute;
+    right: 0;
     display: flex;
     padding: 5px;
 }
@@ -227,6 +226,24 @@ video {
 
 .toolbar-contents>* {
     stroke: var(--content-stroke-color);
+}
+
+#text-off-lines
+{
+
+    opacity: var(--text-lines-off, 0);
+    transition: opacity 0.1s;
+}
+
+.text-off
+{
+    --text-lines-off: 1;
+    --cameraview-canvas-display: none;
+}
+
+#text-off-lines path:nth-child(2)
+{
+    stroke: var(--toolbar-fill-color);
 }
 
 .toolbar-contents:hover * {
@@ -286,11 +303,19 @@ display: inline;
 
 }
 
+#mainContainer
+{
+    
+    height: 100vh;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+}
+
 #offscreencanvas
 {
-   /* display: none; */
-   width: 100%;
-   height: 100%;
+    display: var(--cameraview-canvas-display, block);
+    width: 100%;
+    height: 100%;
 }
 
 #drawing-container
@@ -299,7 +324,7 @@ display: inline;
     height: 100%;
 }
 
-#polyline-id
+polyline
 {
     stroke: hsla(223, 14%, 45%, 100%);
     stroke-width: 6;
@@ -309,18 +334,18 @@ display: inline;
 {
    
     margin: 0 auto;
-	height: 2rem;
-	background-color: hsl(98, 61%, 85%);
-	width: 100%;
+   height: 2rem;
+   background-color: hsl(98, 61%, 85%);
+   width: 100%;
 }
 
 .meter span
 {
 	background-color: hsl(115, 69%, 75%);
-	  display: inline-block;
-  height: 100%;
-	  position: relative;
-  overflow: hidden;
+	display: inline-block;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
 	animation: progressBar 5s infinite ease-out;
 }
 

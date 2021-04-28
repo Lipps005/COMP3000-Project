@@ -65,7 +65,7 @@ var maxFromHeight = 0;
 var firstPass = true;
 self.onmessage = async function findNib(evt) {
 
-    console.time("timer");
+    //console.time("timer");
     const imgData = evt.data.imgData;
     bitmap = imgData.data;
     width = evt.data.width;
@@ -120,14 +120,14 @@ self.onmessage = async function findNib(evt) {
 
     maxx = Math.floor(meanx);
     maxy = Math.floor(meany);
-    
-    console.timeEnd("timer");
+
+    //console.timeEnd("timer");
 
     self.postMessage({
-        xcoordinate: meanx,
-        ycoordinate: meany,
+        xcoordinate: maxx,
+        ycoordinate: maxy,
         bitmap: imgData
     });
-
+    
     firstPass = false;
 }

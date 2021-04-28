@@ -146,50 +146,88 @@ function processFrame(imgData) {
 
 $(document).ready(function() {
 
-    var count = 0;
-    var svgDrawingContainer = document.getElementById('drawing-container');
-    var xBefore = 0;
-    var yBefore = 0;
-    //var drawingContainerCtx = svgDrawingContainer.getContext("2d");
-    //drawingContainerCtx.lineCap = "round";
-    //drawingContainerCtx.strokeStyle = 'green';
-    //drawingContainerCtx.beginPath();
+
+    var svgDrawingContainer = document.getElementById('svg-drawing');
+
+    WebWorker.addEventListener("newGlyphFragment", async function(result) {
+        
+        //var $polylineClone = $("#svg-drawing > :last-child").clone();
+        //$polylineClone.attr("points", "");
+        //$("#svg-drawing").append($polylineClone);
+    });
 
     WebWorker.addEventListener("returnCoordinates", async function(result) {
-        let width = svgDrawingContainer.clientWidth;
-        let height = svgDrawingContainer.clientHeight;
+        let width = $("#svg-drawing").width();
+        let height = $("#svg-drawing").height();
+
+        console.log(height);
+
+        let progress = result.data.progress;
         let pointx = width - (result.data.coordinates.x * width) - 1;
         let pointy = result.data.coordinates.y * height;
 
-        let stdvX = ((pointx - xBefore) ** 2);
-        let stdvY = ((pointy - yBefore) ** 2);
+        var point = svgDrawingContainer.createSVGPoint();
+        point.x = pointx;
+        point.y = pointy;
 
-        if (stdvX > 9.3 || stdvY > 9.3) {
-            count = (count + 1) % 46;
+        //easier to use vanilla JS to retreive the DOMElement as thats what is needed
+        //to access the points attribute
+        var polyline = document.getElementById("svg-drawing").lastElementChild;
+        polyline.points.appendItem(point);
+        $(".meter > span").css("width", (progress / 79) * 100 + "%");
+    });
 
-            var point = svgDrawingContainer.createSVGPoint();
-            point.x = pointx;
-            point.y = pointy;
-            //svgP = point.matrixTransform(svgDrawingContainer.getScreenCTM());
-            var polyline = document.getElementById('polyline-id');
-            polyline.points.appendItem(point);
-            $(".meter > span").css("width", (count / 46) * 100 + "%");
-        }
-        //if not different enough, and "progress" > 80?
-        //reset the drawing container by cloning the container,
-        //changing the id of the clone. "somehow" reset the points attribute,
-        //or replace the polyline element with a new one.
-        // - this could be a clone, pre-defined string thats converted to HTML element
-        //   or a template element
-       
-        //have the polyline with the attribute == array of points, what to do?
-        //Can only access the points, and the HTML element, in this thread.
+    WebWorker.addEventListener("characterDrawn", async function(result) {
 
-        //XML http requests 
+        $(".meter > span").css("width", "0%");
+        const cloneCount = result.data.id;
+        let $drawingContainer = $("#drawing-container");
 
-        xBefore = pointx;
-        yBefore = pointy;
+        //easier to access points before cloning IMO.
 
+        var polylineClonePoints = [];
+        $("#svg-drawing > polyline").each(function(index) {
+            //split each points array into seperate elements on every space 
+            let arr = $(this).attr("points").split(' ');
+            polylineClonePoints.push(...arr);
+        })
+
+        let $clone = $drawingContainer.clone(true);
+        let $cloneSVG = $($clone).find("#svg-drawing");
+
+        $clone.attr('id', 'drawingcontainerid' + cloneCount);
+        $cloneSVG.attr('id', 'drawingsvgid' + cloneCount);
+        $clone.attr('aria-label', "Machine Learning result pending");
+
+        //calculate min and max points from all polylines.
+        //used to define size of viewBox.
+        //scales/positions polylines in new container.
+
+        var minPoint = Math.min(...polylineClonePoints);
+        var maxPoint = Math.max(...polylineClonePoints);
+
+        $cloneSVG.attr("viewBox", `${minPoint} ${minPoint} ${maxPoint} ${maxPoint}`);
+
+        $clone.css("width", "6rem");
+        $clone.css("height", "9rem");
+
+        $cloneSVG.css("max-width", "100%");
+        $cloneSVG.css("height", "100%");
+
+        $clone.addClass("svgCloneDiv");
+        
+        $("#mainContainer").append($clone);
+
+        //think this is needed to actually resize/reposition the polylines in the clone
+        $clone.offset();
+
+        //remove all but one polyline from main drawing container and
+        //reset points attribute
+        $("#svg-drawing > polyline").not(":last-child").remove();
+
+        //i think there is a specific function for this but if jQuery does it
+        //its supported
+        $("#svg-drawing > :last-child").attr("points", "");
 
     });
 
@@ -214,38 +252,40 @@ $(document).ready(function() {
     window.addEventListener('online', notifyOnline);
     window.addEventListener('offline', notifyOffline);
 
-    var pos1 = 0
-      , pos2 = 0
-      , pos3 = 0
-      , pos4 = 0;
+    const toolbar = document.querySelector("#toolbar-mover");
+    let _startY;
+    let _startX;
 
-    $("#toolbar-mover").on(toolbarstartevent, function(e) {
+    toolbar.addEventListener('touchstart', function(e) {
 
-        var event = e.changedTouches[0];
+        _startY = e.touches[0].pageY;
+        _startX = e.touches[0].pageX;
 
-        // get the mouse cursor position at startup:
-        pos3 = event.clientX;
-        pos4 = event.clientY;
         // call a function whenever the cursor moves:
-        $("body").on(toolbarmoveevent, mousemover);
+        toolbar.addEventListener('touchmove', toolbarTouchChange, {
+            passive: true
+        });
 
-        $("body").on(toolbarendevent, mouseupevent);
+        //toolbar.addEventListener(toolbarendevent, ToolbarTouchEnd);
 
+    }, {
+        passive: true
     });
 
-    function mousemover(e) {
-        var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
-        pos1 = pos3 - event.clientX;
-        pos2 = pos4 - event.clientY;
-        pos3 = event.clientX;
-        pos4 = event.clientY;
-        $("#toolbar").css("margin-bottom", ($("#toolbar-container").innerHeight() - pos4) + "px");
-        $("#toolbar").css("margin-right", ($("#toolbar-container").innerWidth() - pos3) + "px");
-    }
-    ;function mouseupevent() {
-        /* stop moving when mouse button is released:*/
-        $("body").unbind("mousemove touchmove");
-        $("body").unbind("mouseup touchend");
+    function toolbarTouchChange(e) {
+        //var event = e.changedTouches[0] === undefined ? e : e.changedTouches[0];
+        //let pos3 = event.clientX;
+        //let pos4 = event.clientY;
+        const y = e.touches[0].pageY;
+        const x = e.touches[0].pageX;
+
+        let yScaled = y / $(document.body).outerHeight();
+        yScaled *= 100;
+
+        let xScaled = (x - $("#toolbar-container").offset().left) / $("#toolbar-container").outerWidth();
+        xScaled *= 100;
+        $("#toolbar").css("margin-bottom", (100 - yScaled) + "%");
+        $("#toolbar").css("margin-right", (100 - xScaled) + "%");
     }
 
     function userClickPause() {
@@ -304,4 +344,17 @@ $(document).ready(function() {
     $(window).resize(function() {
         $("#toolbar").css("top", $("body").height() - $("toolbar").outerWidth(true) + "px");
     });
+
+    $("#drawing-show").click(function() {
+        $("#text-off-lines, #offscreencanvas").toggleClass("text-off");
+
+    });
+
+    var characterPressTimeout;
+
+
+
+
+
+       
 });

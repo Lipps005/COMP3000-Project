@@ -16,19 +16,21 @@ Project: COMP3006 Coursework
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
 </head>
+
+
 <body class="h-100vh w-100">
-<div id="loading-cover" class="h-100vh w-100 flex column wrap loader ">
-<svg class="auto-margin" id="loader-camera" viewBox="0 0 39 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <div id="loading-cover" class="h-100vh w-100 flex column wrap loader ">
+      <svg class="auto-margin" id="loader-camera" viewBox="0 0 39 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-<path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M11 5L12.4792 2.7812C13.2211 1.6684 14.47 1 15.8074 1H22.1926C23.53 1 24.7789 1.6684 25.5208 2.7812L27 5H37V27H1V5H3H8H11Z" stroke="#333333" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M11 5L12.4792 2.7812C13.2211 1.6684 14.47 1 15.8074 1H22.1926C23.53 1 24.7789 1.6684 25.5208 2.7812L27 5H37V27H1V5H3H8H11Z" stroke="#333333" stroke-linecap="round" stroke-linejoin="round"/>
 
-<rect class="loader-camera-element" x="29.5" y="7.5" width="5" height="3" rx="0.8" stroke="#333333"/>
-<path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M19 21C22.3137 21 25 18.3137 25 15C25 11.6863 22.3137 9 19 9C15.6863 9 13 11.6863 13 15C13 18.3137 15.6863 21 19 21Z" stroke="#333333"/>
-<line class="loader-camera-element" x1="4.5" y1="7" x2="4.5" y2="25" stroke="#333333"/>
-<path class="loader-camera-element" d="M9 5V2.85714C9 2.38376 8.61624 2 8.14286 2H3.85714C3.38376 2 3 2.38376 3 2.85714V5" stroke="#333333"/>
-</svg>
-<span id="loader-text-hint" class="auto-margin" >Waiting for camera permission</span>
-</div>
+      <rect class="loader-camera-element" x="29.5" y="7.5" width="5" height="3" rx="0.8" stroke="#333333"/>
+      <path class="loader-camera-element" fill-rule="evenodd" clip-rule="evenodd" d="M19 21C22.3137 21 25 18.3137 25 15C25 11.6863 22.3137 9 19 9C15.6863 9 13 11.6863 13 15C13 18.3137 15.6863 21 19 21Z" stroke="#333333"/>
+      <line class="loader-camera-element" x1="4.5" y1="7" x2="4.5" y2="25" stroke="#333333"/>
+      <path class="loader-camera-element" d="M9 5V2.85714C9 2.38376 8.61624 2 8.14286 2H3.85714C3.38376 2 3 2.38376 3 2.85714V5" stroke="#333333"/>
+      </svg>
+      <span id="loader-text-hint" class="auto-margin" >Waiting for camera permission</span>
+   </div>
    <div id="toolbar-container">
       <div id="toolbar" class="flex border-radius-round">
          <svg id="toolbar-mover" class="disp-inline width-3rem height-3rem border-radius-cirlce toolbar-fill-color padding-005rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,13 +57,21 @@ Project: COMP3006 Coursework
             <path d="M48.1476 13.4453L42.8346 21.4147C42.7251 21.579 42.6667 21.772 42.6667 21.9694V30.0306C42.6667 30.228 42.7251 30.421 42.8346 30.5853L48.1476 38.5547C48.3331 38.8329 48.6453 39 48.9796 39H53.2222C53.7745 39 54.2222 38.5523 54.2222 38V14C54.2222 13.4477 53.7745 13 53.2222 13H48.9796C48.6453 13 48.3331 13.1671 48.1476 13.4453Z" stroke="#2329D6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M5 47L43 4" stroke="#2329D6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
+            <svg id="drawing-show" class="toolbar-contents align-center" viewBox="0 0 73 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M32.5 30H6V35M32.5 30H59V36.6666M32.5 30V95M32.5 95H28.9189M32.5 95H36.0811" stroke="#2329D6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="text-off-lines">
+            <path  d="M61.0935 98L8 7.8223"  stroke-width="10"/>
+            <path d="M69.0935 93.1777L16 3"  stroke-width="9"/>
+            </g>
+            </svg>
 
          </div>
       </div>
    </div>
 
    <video id="hiddenvideo" autoplay></video>
-   
+
    <svg class="notify-modal" id="offline-modal" viewBox="0 0 314 114" fill="none" xmlns="http://www.w3.org/2000/svg">
    <rect y="4" width="314" height="110" rx="21" fill="#F4F4F4" />
    <path d="M100.885 47.873C78.8639 25.8517 44.1 24.9122 23.2378 45.7744" stroke="black" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
@@ -84,18 +94,21 @@ Project: COMP3006 Coursework
 
    <div class="main flex row wrap h-100vh w-100">
 
-      <div class="flex-row-container flex-60">
-      <canvas id="offscreencanvas" ></canvas>
-      </div>
+      <div class="flex-row-container flex-60 flex row wrap" id="mainContainer">
+            <div>
+            <canvas id="offscreencanvas" ></canvas>
+            </div>
+         </div>
       <div class="flex-row-container flex-30 flex row wrap">
-            <!--- <canvas height="100%" width="100%" id="drawing-container">---!>
-            <div class="meter">
-                  <span></span>
-            </div> 
-             <svg height="100%" width="100%" id='drawing-container'>
-                  <polyline id="polyline-id" points="" style="fill:none;" />
+         
+         <div class="meter">
+               <span></span>
+      </div>
+         <div id="drawing-container">
+          <svg height="100%" width="100%" id='svg-drawing'>
+               <polyline points="" style="fill:none;" />
             </svg>
- 
+         </div>
       </div>
 
 
