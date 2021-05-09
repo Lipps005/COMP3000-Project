@@ -3,7 +3,7 @@
  * Project: COMP3000 Coursework
  */
 
-var version = 'v3:4:1';
+var version = 'v3:7:1';
 const regex = new RegExp("/localhost:5000/newimage");
 
 // Install 
@@ -38,58 +38,58 @@ self.addEventListener('activate', function(event) {
 });
 
 // Listen for network requests from the main document
-self.addEventListener('fetch', function(event) {
-    if(event.request.method !=="GET")
-    {
-        return;
+self.addEventListener('fetch', async function(event) {
+
+    //if request method is POST, don't look in cache, and don't store the result in cache. 
+    //However, we still want the same process to occur if there was an error completing the request.
+    var response;
+
+    async function storeInCache(response) {
+        var cacheCopy = response.clone();
+        caches // We open a cache to store the response for this request.
+        .open(version + 'pages').then(function add(cache) {
+            cache.put(event.request, cacheCopy);
+        }).then(function() {
+            console.log('WORKER: fetch response stored in cache.', event.request.url);
+        });
+
+        return response;
     }
-    event.respondWith(caches.match(event.request)//promise that resolves into a cache entry we can serve to the response.
-    .then(function(cached) {
-        var networked = fetch(event.request)//still go to network as well to produce an 'eventually fresh' reponse
-        .then(fetchedFromNetwork, unableToResolve).catch(unableToResolve);
-
-        console.log('WORKER: fetch event', cached ? '(cached)' : '(network)', event.request.url);
-        return cached || networked;
-
-        function fetchedFromNetwork(response) {
-            var cacheCopy = response.clone();
-            //create a copy of the reponse to store in cache
-
-            console.log('WORKER: fetch response from network.', event.request.url);
-
-
-                caches // We open a cache to store the response for this request.
-                .open(version + 'pages').then(function add(cache) {
-                    cache.put(event.request, cacheCopy);
-                }).then(function() {
-                    console.log('WORKER: fetch response stored in cache.', event.request.url);
-                });
-
-
-            return response;
+    
+    async function fetchedFromNetwork(response)
+    {
+        if(event.request.method !== "POST")
+        {
+           await storeInCache(response); 
         }
 
-        //this function is called when we a reponse was unavailable from either the cache or
-        //the network. 
+        return response;
+    }
 
-    }));
+event.respondWith(
+    caches
+      /* This method returns a promise that resolves to a cache entry matching
+         the request. Once the promise is settled, we can then provide a response
+         to the fetch request.
+      */
+      .match(event.request)
+      .then(function(cached) {
+    
+
+    var networked = fetch(event.request) 
+      .then(fetchedFromNetwork, unableToResolve)
+      .catch(unableToResolve);
+
+      console.log('WORKER: fetch event', cached ? '(cached)' : '(network)', event.request.url);
+    return cached || networked;
+      })
+     );
+
 });
 
 function unableToResolve() {
-    /* There's a couple of things we can do here.
-                  - Test the Accept header and then return one of the `offlineFundamentals`
-                  e.g: `return caches.match('/some/cached/image.png')`
-                  - You should also consider the origin. It's easier to decide what
-                  "unavailable" means for requests against your origins than for requests
-                  against a third party.
-                  - Generate a Response programmaticaly, as shown below, and return that
-                  */
 
     console.log('WORKER: fetch request failed in both cache and network.');
-
-    /* Here we're creating a response programmatically. The first parameter is the
-                  response body, and the second one defines the options for the response.
-                  */
     return new Response('<h1>Service Unavailable</h1>',{
         status: 503,
         statusText: 'Service Unavailable',
@@ -97,5 +97,4 @@ function unableToResolve() {
             'Content-Type': 'text/html'
         })
     });
-    notifyOffline();
 }

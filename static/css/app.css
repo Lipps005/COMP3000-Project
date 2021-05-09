@@ -1,10 +1,7 @@
 /*
 Author: Samuel Lippett
 Project: COMP3000 Coursework
-*/
-/* 
-    Created on : 14-Feb-2021, 15:36:41
-    Author     : samue
+Created on : 14-Feb-2021, 15:36:41
 */
 :root {
     --notification-timing-function: cubic-bezier(0.965, -0.105, 0.295, 1.225);
@@ -322,6 +319,22 @@ display: inline;
 {
     width: 100%;
     height: 100%;
+}
+
+.on-ml-response
+{
+
+}
+
+.svgCloneDiv::after
+{
+ content: attr(aria-label);
+ position: relative;
+bottom: 100%;
+ background-color: hsl(0deg 86% 87% / 64%);
+ font-size: 1rem;
+ height: 7rem;
+ width: 4rem;
 }
 
 polyline

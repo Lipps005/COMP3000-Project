@@ -55,8 +55,8 @@ for (let red = 0; red <= 255; red++) {
 
 var fromWidth, fromHeight = 0;
 var toWidth, toHeight = 0;
-var maxx = 50;
-var maxy = 50;
+var maxx = 300;
+var maxy = 200;
 var meanx = maxx;
 var meany = maxy;
 
@@ -65,6 +65,12 @@ var maxFromHeight = 0;
 var firstPass = true;
 self.onmessage = async function findNib(evt) {
 
+    if('reposition' in evt.data)
+    {
+        meanx = maxx = evt.data.reposition.x;
+        meany = maxy = evt.data.reposition.y;
+    }
+    
     //console.time("timer");
     const imgData = evt.data.imgData;
     bitmap = imgData.data;

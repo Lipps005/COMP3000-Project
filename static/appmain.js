@@ -146,21 +146,24 @@ function processFrame(imgData) {
 
 $(document).ready(function() {
 
-
     var svgDrawingContainer = document.getElementById('svg-drawing');
 
+    WebWorker.addEventListener("ServerMLResponse", async function(result) {
+        console.log(result.data);
+        $("#drawingcontainerid" + result.data.drawingId).addClass("on-ml-response");
+        $("#drawingcontainerid" + result.data.drawingId).attr("aria-label", result.data.bestFit);
+
+    });
+
     WebWorker.addEventListener("newGlyphFragment", async function(result) {
-        
-        //var $polylineClone = $("#svg-drawing > :last-child").clone();
-        //$polylineClone.attr("points", "");
-        //$("#svg-drawing").append($polylineClone);
+    //var $polylineClone = $("#svg-drawing > :last-child").clone();
+    //$polylineClone.attr("points", "");
+    //$("#svg-drawing").append($polylineClone);
     });
 
     WebWorker.addEventListener("returnCoordinates", async function(result) {
         let width = $("#svg-drawing").width();
         let height = $("#svg-drawing").height();
-
-        console.log(height);
 
         let progress = result.data.progress;
         let pointx = width - (result.data.coordinates.x * width) - 1;
@@ -215,7 +218,7 @@ $(document).ready(function() {
         $cloneSVG.css("height", "100%");
 
         $clone.addClass("svgCloneDiv");
-        
+
         $("#mainContainer").append($clone);
 
         //think this is needed to actually resize/reposition the polylines in the clone
@@ -350,11 +353,4 @@ $(document).ready(function() {
 
     });
 
-    var characterPressTimeout;
-
-
-
-
-
-       
 });
